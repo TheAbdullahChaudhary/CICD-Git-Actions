@@ -73,24 +73,22 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - name: Use node js
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies and build
+      - name: npm install and build
         run: |
           npm install
           npm run build
-        env:
-          CI: true
+        env: 
+          CI: true   
 
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
+
 
     steps:
       - name: SSH deploy
