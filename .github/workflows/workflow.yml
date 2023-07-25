@@ -1,3 +1,59 @@
+# name: CICD for Youtube
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: [16.x]
+
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Use node js
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - name: npm install and build
+#         run: |
+#           npm install
+#           npm run build
+#         env: 
+#           CI: true   
+
+#   deploy:
+#     needs: [build]
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: SSH deploy
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username:  ${{ secrets.USER }}
+#           key:  ${{ secrets.KEY }}
+#           port:  ${{ secrets.PORT }}
+#           script: |
+#             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+#             . ~/.nvm/nvm.sh
+#             nvm install 16  # Updated to Node.js version 16
+#             npm install -g pm2
+#             cd ~/CICD/CICD-Youtube
+#             git pull origin master
+#             npm install
+#             npm run build
+#             pm2 start npm --name api  -- run start:prod
+#             pm2 restart api
+#             # Correct the file permissions
+#             chmod +x app.js  # Removed the unnecessary 'cd' command
+
+
+
+
 name: CICD for Youtube
 
 on:
@@ -50,3 +106,10 @@ jobs:
             pm2 restart api
             # Correct the file permissions
             chmod +x app.js  # Removed the unnecessary 'cd' command
+            # Copy the built application files to the server
+            scp -r dist/ ${{ secrets.USER }}@${{ secrets.HOST }}:/path/to/your/destination/folder/
+
+
+
+
+
