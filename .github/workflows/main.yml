@@ -48,5 +48,5 @@ jobs:
             npm run build
             pm2 restart api
             # Replace '~/CICD' with the correct path to the 'dist' directory
-            chmod +x ~/CICD/app.js
+            chmod +x cd ~/CICD/CICD-Youtube/app.js
 
