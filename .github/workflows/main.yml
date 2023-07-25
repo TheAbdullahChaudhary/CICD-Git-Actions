@@ -42,7 +42,7 @@ jobs:
             . ~/.nvm/nvm.sh
             nvm install 14
             npm install -g pm2
-            cd ~/CICD
+            cd ~/CICD/CICD-Youtube
             git pull origin main
             npm install
             npm run build
