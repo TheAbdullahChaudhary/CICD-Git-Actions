@@ -43,7 +43,7 @@ jobs:
             nvm install 16  # Updated to Node.js version 16
             npm install -g pm2
             cd ~/CICD/CICD-Youtube
-            git pull origin main
+            git pull origin master
             npm install
             npm run build
             pm2 restart api
