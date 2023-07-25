@@ -47,5 +47,6 @@ jobs:
             npm install
             npm run build
             pm2 restart api
-            # Correct the file permissions (change permission as needed)
-            chmod +x app.js
+            # Replace '~/CICD' with the correct path to the 'dist' directory
+            chmod +x ~/CICD/app.js
+
