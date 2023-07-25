@@ -46,6 +46,7 @@ jobs:
             git pull origin master
             npm install
             npm run build
+            pm2 start npm --name api  -- run start:prod
             pm2 restart api
             # Correct the file permissions
             chmod +x app.js  # Removed the unnecessary 'cd' command
