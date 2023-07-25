@@ -1,3 +1,63 @@
+# name: CICD for Youtube
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: [16.x]
+
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Use node js
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - name: npm install and build
+#         run: |
+#           npm install
+#           npm run build
+#         env: 
+#           CI: true   
+
+#   deploy:
+#     needs: [build]
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: SSH deploy
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username:  ${{ secrets.USER }}
+#           key:  ${{ secrets.KEY }}
+#           port:  ${{ secrets.PORT }}
+#           script: |
+#             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+#             . ~/.nvm/nvm.sh
+#             nvm install 16  # Updated to Node.js version 16
+#             npm install -g pm2
+#             cd ~/CICD/CICD-Youtube
+#             git pull origin master
+#             npm install
+#             npm run build
+#             pm2 start npm --name api  -- run start:prod
+#             pm2 restart api
+#             # Correct the file permissions
+#             chmod +x app.js  # Removed the unnecessary 'cd' command
+
+
+
+
+
+
+
+
 name: CICD for Youtube
 
 on:
@@ -13,17 +73,20 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use node js
-        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm install and build
+
+      - name: Install dependencies and build
         run: |
           npm install
           npm run build
-        env: 
-          CI: true   
+        env:
+          CI: true
 
   deploy:
     needs: [build]
@@ -31,25 +94,35 @@ jobs:
 
     steps:
       - name: SSH deploy
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.4.0
         with:
           host: ${{ secrets.HOST }}
-          username:  ${{ secrets.USER }}
-          key:  ${{ secrets.KEY }}
-          port:  ${{ secrets.PORT }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
           script: |
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
             . ~/.nvm/nvm.sh
             nvm install 16  # Updated to Node.js version 16
             npm install -g pm2
-            cd ~/CICD/CICD-Youtube
+
+            # Navigate to the correct directory where the Node.js app resides
+            cd /home/ubuntu/CICD/CICD-Youtube
+
             git pull origin master
             npm install
             npm run build
-            pm2 start npm --name api  -- run start:prod
+            pm2 start npm --name api -- run start:prod
             pm2 restart api
-            # Correct the file permissions
-            chmod +x app.js  # Removed the unnecessary 'cd' command
+            # Correct the file permissions if needed (replace 'app.js' with the actual entry point file)
+            chmod +x app.js
+
+      - name: Debug deployment directory
+        run: |
+          ls -al /home/ubuntu/CICD/CICD-Youtube
+
+
+
 
 
 
