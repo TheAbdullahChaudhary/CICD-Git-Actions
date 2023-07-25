@@ -94,7 +94,7 @@ jobs:
 
     steps:
       - name: SSH deploy
-        uses: appleboy/ssh-action@v0.4.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
